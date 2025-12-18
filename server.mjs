@@ -58,6 +58,31 @@ async function urlToBase64DataUrl(imageUrl) {
   }
 }
 
+// Конвертирует URL картинки в base64 data URL
+async function convertUrlToBase64(imageUrl) {
+  try {
+    console.log(`[Convert] Converting image: ${imageUrl}`);
+    const response = await fetch(imageUrl);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: Failed to fetch image`);
+    }
+    
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    const mimeType = response.headers.get('content-type') || 'image/jpeg';
+    const dataUrl = `data:${mimeType};base64,${base64}`;
+    
+    console.log(`[Convert] ✅ Successfully converted: ${imageUrl.substring(0, 50)}...`);
+    return dataUrl;
+  } catch (error) {
+    console.error(`[Convert] ❌ Failed to convert ${imageUrl}:`, error.message);
+    throw new Error(`Failed to convert image URL: ${error.message}`);
+  }
+}
+
+
+
 /**
  * Submit a single task to WaveSpeed API
  */
